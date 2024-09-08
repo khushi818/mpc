@@ -1,1 +1,1 @@
-export const  BASE_URL = 'http://localhost:8080/api/v1'
+export const  BASE_URL = 'https://mpc-90oz.onrender.com/api/v1'
