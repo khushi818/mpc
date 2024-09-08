@@ -21,6 +21,7 @@ import {
 import { format } from 'date-fns';
 import instance from '../constant/instance'
 import {Link} from 'react-router-dom'
+import {toast} from 'react-toastify'
 const VoteSession = () => {
   const [candidateName, setCandidateName] = useState('');
   const [candidates, setCandidates] = useState([]);
@@ -39,16 +40,19 @@ const VoteSession = () => {
   };
 
   const handleToggleSession = async(event) => {
-    setSessionOn(event.target.checked);
-    if(event.target.checked) {
-       await instance.post('/vote/vote-session', { candidates })  
-    }
-    else{
-      setCandidates([])
-    }
+    try{
+    event.preventDefault()
+    
+    await instance.post('/vote/vote-session', { candidates })  
+    
     if (!createdAt) {
       setCreatedAt(new Date());
     }
+    allSessions()
+  }
+  catch(err) {
+     toast.error("something went wrong")
+  }
   };
 
   const handleViewResults =async(id) => {

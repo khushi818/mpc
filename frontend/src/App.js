@@ -32,8 +32,7 @@ export default function App() {
                <Route path="/votesession" element = {<VoteSession/>} />
           </Route>
           ) : <Route path="/" element={<Auth/>}/> }
-          <Route path="/feedback/:candidateName" element={<Feedback/>} />
-          
+          <Route path="/feedback/:candidateName" element={<Feedback/>} /> 
         </Routes>
      </Router>  
   );

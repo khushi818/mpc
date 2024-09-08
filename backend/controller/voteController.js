@@ -1,12 +1,14 @@
 const VoteSession = require('../model/voteSession')
 const Candidate = require('../model/candidate')
 const Vote = require('../model/vote')
+const {jiffClient} = require('../utils/Jiff')
 
 const createSession = async(req,res) => {
  try{
     const { candidates } = req.body
     
     const createCandidates = await Candidate.insertMany([...candidates])
+
 
     const candidateIDs = createCandidates.map((candidate, index) =>{
           return candidate._id
@@ -20,6 +22,7 @@ const createSession = async(req,res) => {
     })
    }
      catch(err) {
+      console.log(err)
         return res.status(500).json({
           success: false,
           message : "failed to create role"

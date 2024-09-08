@@ -3,7 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 
-const JIFFServer = require('jiff-mpc/lib/jiff-server');
+
 dotenv.config();
 
 
