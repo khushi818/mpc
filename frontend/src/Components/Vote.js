@@ -27,7 +27,7 @@ const Vote = () => {
   const [sessionOn, setSessionOn] = useState(false)
   const [session , setSession] = useState({})
   const [comment, setComment] = useState('');
-  
+  const [getIndex , setGetIndex] = useState([])
   const checkVote = async() =>{
       try{
          const {data} = await instance.get(`/vote/checkvote/${session?._id}`)
@@ -60,12 +60,13 @@ const Vote = () => {
   // Confirm vote
   const handleConfirmVote = async(e) => {
     e.preventDefault();
-    
+    console.log(getIndex)
    try{
     await instance.post('/vote/vote-candidate' ,{
       candidate : candidateData._id,
       session : session._id,
-      comment 
+      comment , 
+      index : [...getIndex]
     })
     checkVote()
     setVoteConfirmed(true);
@@ -94,6 +95,19 @@ const Vote = () => {
       }
   }
 
+  const handleIndex = (index) =>{
+    let input = [];
+    for(let i =0 ; i < 3 ; i++) {
+      if(i === index ){
+       input.push(1)
+      }
+      else {
+        input.push(0)
+      }
+    }
+    console.log(input)
+    setGetIndex([...input])
+  }
   
 
   useEffect(()=>{
@@ -133,7 +147,10 @@ const Vote = () => {
                   key={index}
                   value={candidate.name}
                   control={<Radio />}
-                  onClick={()=> setCandidateData(candidate)}
+                  onClick={() =>  {
+                    setCandidateData(candidate) 
+                    handleIndex(index) 
+                  }}
                   label={candidate.name}
                 />
               ))}

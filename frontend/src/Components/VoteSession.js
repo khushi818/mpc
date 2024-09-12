@@ -184,7 +184,7 @@ const VoteSession = () => {
                   handleUpdateSession(session._id , !session.sessionActive)
                 }} />}
                  label={session.sessionActive ? 'Voting Session: ON' : 'Voting Session: OFF'}
-                //  disabled = {!session.sessionActive}
+                 disabled = {!session.sessionActive}
                />
                 </TableCell>
                 <TableCell>{session.createdAt}</TableCell>

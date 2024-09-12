@@ -16,6 +16,7 @@ const voteSchema = new mongoose.Schema({
     ref: 'votesession',
     required: true,
   },
+  index : []
 }, { timestamps: true });
 
 const Vote = mongoose.model('Vote', voteSchema);

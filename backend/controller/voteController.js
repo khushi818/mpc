@@ -3,6 +3,26 @@ const Candidate = require('../model/candidate')
 const Vote = require('../model/vote')
 const {jiffClient} = require('../utils/Jiff')
 
+const encrypt = (results) =>{
+    const input_array = results.map(result => {
+      return result.index
+    })
+
+function findWinner(input, callback) {
+  var promise = jiffClient.shares_array(input); // helper for sharing arrays
+  promise.then(function (arrays) {
+    var sanity1 = sanityCheck(arrays[1]); // check first party's input and open result
+    var sanity2 = sanityCheck(arrays[2]);
+    var sanity3 = sanityCheck(arrays[3]);
+    Promise.all([sanity1, sanity2, sanity3]).then(function (results) {
+      Console.log(results);
+      callback((results[0] + results[1] + results[2]) === 3, arrays);
+    });
+  });
+}
+ return input_array
+}
+
 const createSession = async(req,res) => {
  try{
     const { candidates } = req.body
@@ -70,12 +90,13 @@ const findSession = async(req,res) => {
  
 const VoteCandidate = async(req,res) =>{
         try{
-             const { candidate , session , comment } = req.body
+             const { candidate , session , comment , index } = req.body
 
-             const createVote = Vote.create({
+             const createVote = await Vote.create({
                voter: req.user._id,
                candidate: candidate,
-               session : session
+               session : session,
+               index : [...index]
              })
 
              const findCandidate = await Candidate.findOne({_id : candidate})
@@ -123,6 +144,7 @@ const checkVote = async(req,res) =>{
  }   
 }
 
+
 const getResult = async (req, res) =>{
   try{
   const { id } = req.params;
@@ -141,24 +163,28 @@ const getResult = async (req, res) =>{
     // Find all votes for the current candidate in the given session
     const votes = await Vote.find({ session: id, candidate: candidate._id });
 
-
+    console.log(votes)
     // Push candidate result (including votes count and comments)
     results.push({
       id : candidate._id,
       name: candidate.name,
       votes: votes.length,
-    });
-  }
+      index : votes.map((vote, index) => vote.index)
+  })
+}
    
+  const encryptResult = encrypt(results)
   const totalVotes = results.reduce((sum, candidate) => sum + candidate.votes, 0);
   const winner = results.reduce((max, candidate) => candidate.votes > max.votes ? candidate : max, results[0]);
+   
 
   res.status(200).json({
     success: true,
     data : {
     totalVotes,
     winner: winner ? winner.name : null,
-    results
+    results,
+    encryptResult     
     }
   });
 }
@@ -203,6 +229,7 @@ const getCandidateData = async(req,res) =>{
     })
    }
 }
+
 
 module.exports = {
      createSession,
